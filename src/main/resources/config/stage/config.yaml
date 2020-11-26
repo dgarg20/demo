@@ -1,0 +1,112 @@
+serviceName: "Java Base Application"
+
+logging:
+  level: INFO
+  appenders:
+    - type: file
+      currentLogFilename: /var/log/demo/myapplication.log
+      threshold: ALL
+      #queueSize: 512
+      #discardingThreshold: 0
+      maxFileSize: 500MB
+      archive: true
+      archivedLogFilenamePattern: /var/log/demo/myapplication-%i.log.gz
+      archivedFileCount: 5
+      timeZone: IST
+      logFormat: "[%highlight(%-5p)] [%cyan(%d{ISO8601,IST})] [%-20.20thread] [%-40(ID: %magenta(%.36X{trans.id}))] [%blue(%-20.30c)]: %m%n%rEx"
+      bufferSize: 8KB
+      immediateFlush: true
+    - type: console
+      threshold: ALL
+      logFormat: "[%highlight(%-5p)] [%cyan(%d{ISO8601,IST})] [%-20.20thread] [%-40(ID: %magenta(%.36X{trans.id}))] [%blue(%-20.30c)]: %m%n%rEx"
+      timeZone: IST
+  loggers:
+    # use this to add log level or change log level curl -X POST -d "logger=com.example.helloworld&level=INFO" http://localhost:8081/tasks/log-level
+    "io.dropwizard":
+      level: INFO
+      appenders:
+        - type: file
+          currentLogFilename: /var/log/demo/dropwizard.log
+          archivedLogFilenamePattern: /var/log/demo/dropwizard-%i.log.gz
+          archivedFileCount: 5
+          maxFileSize: 200MB
+
+server:
+  maxThreads: 1024
+  maxQueuedRequests: 1024
+  idleThreadTimeout: 1 minute
+  allowedMethods:
+    - GET
+    - POST
+    - PUT
+  rootPath: "/demo"
+  applicationConnectors:
+    - type: http
+      port: 9001
+#    - type: https
+#      port: 8443
+#      keyStorePath: example.keystore
+#      keyStorePassword: example
+#      validateCerts: false
+  adminConnectors:
+    - type: http
+      port: 8082
+#    - type: https
+#      port: 8444
+#      keyStorePath: example.keystore
+#      keyStorePassword: example
+#      validateCerts: false
+  requestLog:
+    appenders:
+      - type: file
+        currentLogFilename: /var/log/demo/requests.log
+        threshold: ALL
+        #queueSize: 512
+        #discardingThreshold: 0
+        archive: true
+        archivedLogFilenamePattern: /var/log/demo/requests-%i.log.gz
+        archivedFileCount: 5
+        maxFileSize: 200MB
+        timeZone: IST
+        logFormat: "%-5p [%d{ISO8601,UTC}] %c: %m%n%rEx"
+        bufferSize: 8KB
+        immediateFlush: true
+
+
+#database:
+#  driverClass : org.postgresql.Driver
+#  url: 'jdbc:postgresql://db.example.com/db-prod'
+#  user: root
+#  password: yatra@123
+
+
+oorFileName: "/var/run/demo_application/run.txt"
+
+swagger:
+  resourcePackage: "com.dgarg20.demo"
+  includeSwaggerResource: true
+  title: Simple Java Application
+  description: "Simple Java Application"
+  contactEmail: "dgarg20@gmail.com"
+
+dataSource:
+  driverClass: com.mysql.jdbc.Driver
+  user: root
+  password: 'yatra@123'
+  url: jdbc:mysql://localhost:3306/demo?autoReconnect=true&useSSL=false&nullNamePatternMatchesAll=true
+  properties:
+    charSet: UTF-8
+    hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+    hibernate.hbm2ddl.auto: update
+    hibernate.show_sql: false
+    hibernate.order_inserts: true
+    hibernate.order_updates: true
+    hibernate.session.events.log: false
+    hibernate.current_session_context_class: org.hibernate.context.internal.ManagedSessionContext
+  maxWaitForConnection: 1s
+  minSize: 1
+  initialSize: 4
+  maxSize: 5
+  checkConnectionWhileIdle: true
+  validationInterval: 10s
+  minIdleTime: 1 minute
